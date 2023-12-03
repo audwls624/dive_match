@@ -12,8 +12,15 @@ fastapi = "^0.104.1"
 uvicorn = "^0.24.0.post1"
 alembic = "^1.12.1"
 sqlalchemy = "^2.0.23"
+tortoise-orm = "^0.20.0"
+aerich = "^0.7.2"
 
 
+
+[tool.aerich]
+tortoise_orm = "common.config.DB_CONFIG"
+location = "./migrations"
+src_folder = "./."
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

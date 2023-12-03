@@ -1,47 +1,41 @@
-from dataclasses import dataclass, field
-from os import path, environ
+from os import environ
+from tortoise import Tortoise
 
-base_dir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
+APP_ENV_LOCAL = "local"
+APP_ENV_PROD = "prod"
+APP_ENV = environ.get("API_ENV", "local")
+IS_PRODUCTION = APP_ENV == APP_ENV_PROD
+DB_URL: str = environ.get("DB_URL", f"sqlite:///database/sqlite_db/{APP_ENV}.db")
 
-
-@dataclass
-class Config:
-    """
-    기본 Configuration
-    """
-
-    BASE_DIR: str = base_dir
-    DB_POOL_RECYCLE: int = 900
-    DB_ECHO: bool = True
-    DEBUG: bool = False
-    TEST_MODE: bool = False
-
-
-@dataclass
-class TestConfig(Config):
-    TRUSTED_HOSTS = ["*"]
-    ALLOW_SITE = ["*"]
-    DB_URL: str = field(default="sqlite:///database/test.db")
-
-
-@dataclass
-class LocalConfig(Config):
-    TRUSTED_HOSTS = ["*"]
-    ALLOW_SITE = ["*"]
-    DEBUG: bool = True
-    DB_URL: str = field(default="sqlite:///database/local.db")
-
-
-@dataclass
-class ProdConfig(Config):
-    TRUSTED_HOSTS = ["*"]
-    ALLOW_SITE = ["*"]
+DB_CONFIG = {
+    "connections": {
+        # Dict format for connection
+        # 'default': {
+        #     'engine': 'tortoise.backends.asyncpg',
+        #     'credentials': {
+        #         'host': 'localhost',
+        #         'port': '5432',
+        #         'user': 'tortoise',
+        #         'password': 'qwerty123',
+        #         'database': 'test',
+        #     }
+        # },
+        # Using a DB_URL string
+        # 'default': DB_URL
+        "default": "sqlite:///database/sqlite_db/local.db"
+    },
+    "apps": {
+        "models": {
+            "models": ["database.models.user_models", "aerich.models"],
+            # If no default_connection specified, defaults to 'default'
+            "default_connection": "default",
+        }
+    },
+}
 
 
-def get_conf():
-    """
-    환경 불러오기
-    :return:
-    """
-    config = dict(prod=ProdConfig, local=LocalConfig, test=TestConfig)
-    return config[environ.get("API_ENV", "local")]()
+async def init():
+    await Tortoise.init(
+        db_url=DB_URL,
+        modules={"models": ["database.models.user_models", "aerich.models"]},
+    )
