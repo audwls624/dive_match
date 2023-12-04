@@ -1,15 +1,19 @@
 from tortoise import fields
-from .abstract_models import BaseModel
+from common.models import BaseModel
+from tortoise.contrib.pydantic import pydantic_model_creator
 
 
 class Certificate(BaseModel):
     name = fields.CharField(max_length=255)
 
-    class Meta:
-        table = "certificates"
-
     def __str__(self):
         return self.name
+
+    class PydanticMeta:
+        exclude = ["created_at", "updated_at"]
+
+    class Meta:
+        table = "certificates"
 
 
 class CertificateLevel(BaseModel):
@@ -18,11 +22,19 @@ class CertificateLevel(BaseModel):
     )
     level = fields.CharField(max_length=100)
 
-    class Meta:
-        table = "certificate_levels"
+    def certificate_name(self) -> str:
+        if self.certificate and self.certificate.name:
+            return self.certificate.name
+        return ""
 
     def __str__(self):
         return f"{self.certificate.name} - {self.level}"
+
+    class PydanticMeta:
+        exclude = ["created_at", "updated_at"]
+
+    class Meta:
+        table = "certificate_levels"
 
 
 class User(BaseModel):
@@ -31,7 +43,7 @@ class User(BaseModel):
     password = fields.CharField(max_length=255)
     phone = fields.CharField(max_length=100)
     certificate_level = fields.ForeignKeyField(
-        "models.CertificateLevel", related_name="users"
+        "models.CertificateLevel", related_name="users", null=True, blank=True
     )
 
     class Meta:
@@ -39,3 +51,10 @@ class User(BaseModel):
 
     def __str__(self):
         return f"{self.id} - {self.name}"
+
+
+# Pydantic Model Creator
+CertificateName_Pydantic = pydantic_model_creator(Certificate, name="certificate_name")
+CertificateLevel_Pydantic = pydantic_model_creator(
+    CertificateLevel, name="certificate_levels"
+)
