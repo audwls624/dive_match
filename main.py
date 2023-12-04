@@ -1,11 +1,31 @@
 import uvicorn
-from typing import Union
 from fastapi import FastAPI
 from common.config import DB_CONFIG, IS_PRODUCTION
 from tortoise.contrib.fastapi import register_tortoise
+from starlette.middleware.cors import CORSMiddleware
+from users.routers import user_router
 
 
 app = FastAPI()
+
+
+origins = [
+    "http://127.0.0.1:8000",
+]
+
+# Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# router include
+app.include_router(user_router)
+
+# Database Init
 register_tortoise(
     app=app,
     config=DB_CONFIG,
@@ -15,13 +35,8 @@ register_tortoise(
 
 
 @app.get("/")
-def read_root():
+async def health_check():
     return "Welcome to Dive Match!"
-
-
-@app.get("/items/{item_id}")
-def read_items(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
 
 
 if __name__ == "__main__":

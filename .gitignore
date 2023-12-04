@@ -263,4 +263,20 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all,python
 
-local.db
+*.whl
+*.db
+*.bat
+*.exp
+*.pdb
+*.dll
+*.a
+*.db-shm
+*.db-wal
+package-lock.json
+*.sqlite
+node_modules/
+# C benchmark binary
+bench/bench
+deno.lock
+bun.lockb
+.DS_Store
