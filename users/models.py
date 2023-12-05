@@ -1,6 +1,8 @@
 from tortoise import fields
-from common.models import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.fields.base import SET_NULL
+
+from common.models import BaseModel
 
 
 class Certificate(BaseModel):
@@ -42,8 +44,11 @@ class User(BaseModel):
     email = fields.CharField(max_length=255)
     password = fields.CharField(max_length=255)
     phone = fields.CharField(max_length=100)
-    certificate_level = fields.ForeignKeyField(
-        "models.CertificateLevel", related_name="users", null=True, blank=True
+    certificate_levels = fields.ManyToManyField(
+        model_name="models.CertificateLevel",
+        related_name="users",
+        through="models.UserCertificateLevel",
+        on_delete=SET_NULL,
     )
 
     class Meta:
@@ -51,6 +56,19 @@ class User(BaseModel):
 
     def __str__(self):
         return f"{self.id} - {self.name}"
+
+
+class UserCertificate(BaseModel):
+    user = fields.ForeignKeyField("models.User", null=True, blank=True)
+    certificate_level = fields.ForeignKeyField(
+        "models.CertificateLevel", null=True, blank=True
+    )
+
+    class Meta:
+        table = "user_certificate_levels"
+
+    def __str__(self):
+        return f"USER: {self.user} - CERTIFICATE_LEVEL: {self.certificate_level}"
 
 
 # Pydantic Model Creator

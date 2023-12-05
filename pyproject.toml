@@ -20,6 +20,7 @@ aerich = "^0.7.2"
 tortoise_orm = "common.config.DB_CONFIG"
 location = "./migrations"
 src_folder = "./."
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

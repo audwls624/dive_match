@@ -3,7 +3,7 @@ from tortoise import Tortoise
 
 APP_ENV_LOCAL = "local"
 APP_ENV_PROD = "prod"
-APP_ENV = environ.get("API_ENV", "local")
+APP_ENV = environ.get("API_ENV", APP_ENV_LOCAL)
 IS_PRODUCTION = APP_ENV == APP_ENV_PROD
 
 SQLITE_DB_URL = f"sqlite://database/sqlite_db/{APP_ENV}.db"
