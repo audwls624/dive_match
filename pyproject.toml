@@ -14,7 +14,12 @@ alembic = "^1.12.1"
 sqlalchemy = "^2.0.23"
 tortoise-orm = "^0.20.0"
 aerich = "^0.7.2"
+pytest = "^7.4.3"
+httpx = "^0.25.2"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest-asyncio = "^0.23.2"
 
 [tool.aerich]
 tortoise_orm = "common.config.DB_CONFIG"

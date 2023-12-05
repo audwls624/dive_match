@@ -1,5 +1,8 @@
 from os import environ
 from tortoise import Tortoise
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_LOCAL = "local"
 APP_ENV_PROD = "prod"
@@ -18,8 +21,11 @@ if IS_PRODUCTION:
             "database": environ.get("DB_NAME", "dive_match_db"),
         },
     }
+elif APP_ENV == APP_ENV_LOCAL:
+    DB_CONNECTION = f"sqlite://database/sqlite_db/{APP_ENV_LOCAL}.db"
 else:
-    DB_CONNECTION = f"sqlite://database/sqlite_db/{APP_ENV}.db"
+    # TEST 환경에서는 메모리 DB 사용
+    DB_CONNECTION = "sqlite://:memory:"
 
 DB_CONFIG = {
     "connections": {
