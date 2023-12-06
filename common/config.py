@@ -22,7 +22,7 @@ if IS_PRODUCTION:
         },
     }
 elif APP_ENV == APP_ENV_LOCAL:
-    DB_CONNECTION = f"sqlite://database/sqlite_db/{APP_ENV_LOCAL}.db"
+    DB_CONNECTION = f"sqlite://{BASE_DIR}/db.sqlite3"
 else:
     # TEST 환경에서는 메모리 DB 사용
     DB_CONNECTION = "sqlite://:memory:"
