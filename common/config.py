@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_LOCAL = "local"
 APP_ENV_PROD = "prod"
-APP_ENV = environ.get("API_ENV", APP_ENV_LOCAL)
+APP_ENV = environ.get("APP_ENV", APP_ENV_LOCAL)
 IS_PRODUCTION = APP_ENV == APP_ENV_PROD
 
 SQLITE_DB_URL = f"sqlite://database/sqlite_db/{APP_ENV}.db"
